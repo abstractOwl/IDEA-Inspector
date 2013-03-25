@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>IDEA Inspector by AbstractOwl</title>
+		<meta name="description" content="Show visually how IDEA works">
+		<meta name="author" content="AbstractOwl">
+
+		<link href='http://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css" media="screen" />
+	
+		<style type="text/css">
+			html, body {
+				font-family: 'Julius Sans One', sans-serif;
+				height: 100%;
+				text-align: center;
+			}
+
+			body, #nav {
+				background: #333;
+				color: #FFF;
+				min-width: 960px;
+			}
+
+			.container {
+				text-align: left;
+			}
+			.diagram {
+				background: #FFF;
+				clear: both;
+				margin-top: 2.4em;
+				margin-bottom: 2.4em;
+				padding: 15px 25px;
+			}
+			.input-block {
+				height: 45px !important;
+				margin: 5px;
+				padding: 6px 4px;
+				text-align: center;
+				width: 45px;
+			}
+			.byte-block {
+				float: left;
+				margin-left: 40px;
+				width: 200px;
+			}
+			.byte-block.sk {
+				width: 300px;
+			}
+			.byte-square {
+				background: #f5f5f5;
+				border: 1px solid #e3e3e3;
+				border-radius: 3px;
+				box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+				color: #333;
+				float: left;
+				height: 34px;
+				line-height: 40px;
+				margin: 2px;
+				padding: 5px;
+				text-align: center;
+				width: 34px;
+			}
+			.log {
+				clear: both;
+				color: #333;
+				cursor: pointer;
+				height: 45px;
+				line-height: 1.6em;
+				margin-left: 60px;
+				margin-top: 5px;
+				margin-bottom: 25px;
+				overflow: hidden;
+			}
+			.log.open {
+				height: auto;
+			}
+			.log .operation {
+				margin-left: 45px;
+			}
+			.log .icon:after {
+				content: '+ ';
+			}
+			.log.open .icon:after {
+				content: '- ';
+			}
+			.round-block {
+				clear: both;
+				margin: 0 auto;
+				margin-top: 90px;
+			}
+			.round-name {
+				border-top: 3px solid #AAA;
+				float: left;
+				height: 80px;
+				line-height: 80px;
+				width: 120px;
+			}
+
+			#page {
+				height: 100%;
+			}
+
+			#nav {
+				height: 60px;
+				margin: 0 auto;
+				left: 0;
+				position: fixed;
+				width: 100%;
+				z-index: 1;
+			}
+			#nav a {
+				color: #FFF;
+				padding-top: 25px;
+				padding-bottom: 15px;
+				text-align: center;
+			}
+			#nav a:hover {
+				background: #555;
+				text-decoration: none;
+			}
+
+			#content {
+				width: 100%;
+			}
+			#content p {
+				line-height: 1.6em;
+			}
+			#results, #inspector {
+				border-top: 5px dashed #555;
+				padding-top: 45px;
+			}
+
+			#btn-inspect {
+				margin: auto;
+				margin-top: 31px;
+			}
+			#output {
+				font-size: 72px;
+				margin: 45px auto;
+				text-align: center;
+			}
+
+			.spacer {
+				clear: both;
+				height: 90px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="page" class="container">
+			<div id="nav" class="row">
+				<h1 class="span7">
+					IDEA Inspector
+					<small>by AbstractOwl</small>
+				</h1>
+				<a class="offset2 span1" href="#intro">Intro</a>
+				<a class="span1" href="#inspect">Inspect</a>
+			</div>
+
+			<div id="content" class="row">
+				<div id="intro" class="spacer">&nbsp;</div>
+
+				<div class="offset1 span10 clearfix">
+					<h2>Intro</h2>
+					<p>The International Data Encryption Algorithm, or IDEA, is a symmetric block cipher developed by researchers James Massey and Xuejia Lai in 1991. It encrypts 64-bit blocks of data using 128-bit keys.</p>
+					<p style="clear:both">IDEA innovates from its predecessors in several ways, such as its independence of S-Boxes and its generalized Feistel structure.</p>
+				</div>
+
+				<div id="inspect" class="spacer">&nbsp;</div>
+				<div id="inspector" class="offset1 span10">
+					<h2>Inspector</h2>
+					<p>Input a key and a message to get started!</p>
+					<div class="span4" id="key-block">
+						<h3>Key: <button class="btn btn-danger" id="rand-key">Random</button></h3>
+						<div class="key-row">
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+						</div>
+						<div class="key-row">
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+						</div>
+						<div class="key-row">
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+						</div>
+						<div class="key-row">
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+						</div>
+					</div>
+					<div class="offset1 span4" id="msg-block">
+						<h3>Message: <button class="btn btn-danger" id="rand-msg">Random</button></h3>
+						<div class="msg-row">
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+						</div>
+						<div class="msg-row">
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+							<input class="input-block" type="text" maxlength="2" />
+						</div>
+					</div>
+					<div style="clear:both; text-align: center">
+						<button id="btn-inspect" class="btn btn-large btn-primary">Inspect!</button>
+					</div>
+
+					<div class="spacer">&nbsp;</div>
+
+					<div id="results">
+						<h2>Results</h2>
+						<div class="span3 offset2" style="position: relative; left: -5px"><h3>Key</h3></div>
+						<div class="span3" style="position: relative; left: -5px;"><h3>Message</h3></div>
+						<div id="input-grid">
+						</div>
+
+						<div class="spacer">&nbsp;</div>
+
+						<div class="span4 offset2" style="position: relative; left: -5px"><h3>Sub-Keys</h3></div>
+						<div class="span3" style="position: relative; left: 15px;"><h3>Message</h3></div>
+						<div id="results-grid">
+						</div>
+
+						<div class="span3 offset2" style="position: relative; left: -5px"><h3>Sub-Keys</h3></div>
+						<div class="span3" style="position: relative; left: -5px;"><h3>Output</h3></div>
+						<div id="output-grid">
+						</div>
+
+						<div class="spacer">&nbsp;</div>
+
+						<h2 class="muted">Therefore, our output is</h2>
+						<h1 id="output"></h1>
+
+						<div class="spacer">&nbsp;</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/bootstrap.js"></script>
+		<script type="text/javascript">
+			(function () {
+				'use strict';
+
+				function createBlock(arr) {
+					var	wrap	=	document.createElement('div'),
+						block	=	'<div class="byte-block ' + ((arr.length == 6) ? 'sk' : '') + '"' + ((arr.length > 0) ? '' : ' style="visibility: hidden"') + '>';
+
+					if (arr.length === 0) {
+					}
+
+					for (var i = 0; i < arr.length; i++) {
+						var square = '<div class="byte-square">' + arr[i].toString(16) + '</div>';
+						block += square;
+					}
+
+					block += '</div>';
+					wrap.innerHTML = block;
+					return wrap.firstChild;
+				}
+				function createRound(rName, rBlocks) {
+					var	round		=	document.createElement('div'),
+						roundName	=	document.createElement('div');
+
+					roundName.className = 'round-name';
+					roundName.innerHTML	=	'<h4>' + rName + '</h4>';
+
+					round.className = 'round-block clearfix';
+					round.appendChild(roundName);
+
+					for (var i = 0, j = rBlocks.length; i < j; i++) {
+						round.appendChild(rBlocks[i]);
+					}
+
+					return round;
+				}
+				function getInputs() {
+					var k = [], m = [];
+					$('.key-row .input-block').each(function () {
+						k.push($(this).val() || 0);
+					});
+					$('.msg-row .input-block').each(function () {
+						m.push($(this).val() || 0);
+					});
+					return { msg: m, key: k };
+				}
+
+				function add(a, b) {
+					return (a + b) % Math.pow(2, 16);
+				}
+				function multiply(a, b) {
+					if (a === 0) {
+						a = Math.pow(2, 16);
+					}
+					if (b === 0) {
+						b = Math.pow(2, 16);
+					}
+					return (a * b) % (Math.pow(2, 16) + 1);
+				}
+				function xor(a, b) {
+					return (a ^ b);
+				}
+				function line(m) {
+					var el = document.createElement('div');
+					m = m.replace('XOR', '&oplus;');
+					m = m.replace('MULT', '&otimes;');
+					m = m.replace('ADD', '&#8862;');
+
+					if (m.indexOf('h3') === -1) {
+						$(el).addClass('operation');
+					}
+
+					$(el).html(m);
+					return el;
+				}
+
+				$('#rand-key').on('click', function () {
+					$('.key-row .input-block').each(function (el) {
+						$(this).val(Math.floor(Math.random() * 256).toString(16).toUpperCase());
+					});
+				});
+
+				$('#rand-msg').on('click', function () {
+					$('.msg-row .input-block').each(function (el) {
+						$(this).val(Math.floor(Math.random() * 256).toString(16).toUpperCase());
+					});
+				});
+
+				$('.input-block').on('change', function () {
+					if (isNaN(parseInt($(this).val(), 16))) {
+						$(this).val(0);
+					}
+				});
+
+				$('#btn-inspect').on('click', function () {
+					var	key, msg, wholeKey, wholeMsg, X = [],
+						row		=	document.createElement('div'),
+						input	=	getInputs();
+
+					key	=	input.key;
+					msg	=	input.msg;
+
+					$('#input-grid').empty();
+					$('#results-grid').empty();
+
+					// Display initial state
+					$('#input-grid').append(
+						createRound('Input', [
+							createBlock(key),
+							createBlock(msg)
+						])
+					);
+
+					// Store values in strings because JavaScript doesn't like big numbers
+					wholeKey = '';
+					for (var i = 0; i < key.length; i++) {
+						var s = '0000000' + parseInt(key[i], 16).toString(2);
+						s = s.substring(s.length - 8);
+						wholeKey += s;
+					}
+
+					wholeMsg = '';
+					for (var i = 0; i < msg.length; i++) {
+						var s = '0000000' + parseInt(msg[i], 16).toString(2);
+						s = s.substring(s.length - 8);
+						wholeMsg += s;
+					}
+
+					for (var i = 0; i < 4; i++) {
+						X[i] = parseInt(wholeMsg.substr(i * (wholeMsg.length / 4), wholeMsg.length / 4), 2);
+					}
+
+					var prevKey = wholeKey;
+					for (var i = 0; i < 7; i++) {
+						var tmp = prevKey.substr(0, 25);
+						prevKey = prevKey.substring(25) + '' + tmp;
+						wholeKey += prevKey;
+					}
+
+					// Perform rounds
+					for (var i = 0; i < 8; i++) {
+						var	a,
+							log,
+							subkey		=	wholeKey.substr(i * 96, 96),
+							sk			=	[],
+							t			=	[];
+
+						log = document.createElement('div');
+						$(log).addClass('log well');
+						$(log).on('click', $.proxy($(log).toggleClass, $(log), 'open'));
+
+						for (var j = 0; j < subkey.length; j += 16) {
+							sk.push(parseInt(subkey.substr(j, 16), 2));
+						}
+
+						$(log).append(line('<h3><span class="icon"></span>Operations for round ' + (i + 1) + '</h3>'));
+						$(log).append(line('X<sub>1</sub> = X<sub>1</sub>(' + X[0].toString(16) + ') MULT K<sub>1</sub>(' + sk[0].toString(16) + ')'));
+						X[0] = multiply(X[0], sk[0]);
+						$(log).append(line('X<sub>4</sub> = X<sub>4</sub>(' + X[3].toString(16) + ') MULT K<sub>4</sub>(' + sk[3].toString(16) + ')'));
+						X[3] = multiply(X[3], sk[3]);
+						$(log).append(line('X<sub>2</sub> = X<sub>2</sub>(' + X[1].toString(16) + ') ADD K<sub>2</sub>(' + sk[1].toString(16) + ')'));
+						X[1] = add(X[1], sk[1]);
+						$(log).append(line('X<sub>3</sub> = X<sub>3</sub>(' + X[2].toString(16) + ') ADD K<sub>3</sub>(' + sk[2].toString(16) + ')'));
+						X[2] = add(X[2], sk[2]);
+
+						$(log).append(line('t<sub>0</sub> = K<sub>5</sub>(' + sk[4].toString(16) + ') MULT (X<sub>1</sub>(' + X[0].toString(16) + ') XOR X<sub>2</sub>(' + X[2].toString(16) + '))'));
+						t[0] = multiply(sk[4], xor(X[0], X[2]));
+						$(log).append(line('t<sub>1</sub> = K<sub>6</sub>(' + sk[5].toString(16) + ') MULT (t<sub>0</sub>(' + t[0].toString(16) + ') ADD (X<sub>2</sub>(' + X[1].toString(16) + ') XOR X<sub>4</sub>(' + X[3].toString(16) + ')))'));
+						t[1] = multiply(sk[5], add(t[0], xor(X[1], X[3])));
+						$(log).append(line('t<sub>2</sub> = t<sub>0</sub>(' + t[0].toString(16) + ') ADD t<sub>1</sub>(' + t[1].toString(16) + ')'));
+						t[2] = add(t[0], t[1]);
+
+						$(log).append(line('X<sub>1</sub> = X<sub>1</sub>(' + X[0].toString(16) + ') XOR t<sub>1</sub>(' + t[1].toString(16) + ')'));
+						X[0] = xor(X[0], t[1]);
+						$(log).append(line('X<sub>4</sub> = X<sub>4</sub>(' + X[3].toString(16) + ') XOR t<sub>2</sub>(' + t[2].toString(16) + ')'));
+						X[3] = xor(X[3], t[2]);
+						$(log).append(line('a&nbsp; = X<sub>2</sub>(' + X[1].toString(16) + ') XOR t<sub>2</sub>(' + t[2].toString(16) + ')'));
+						a = xor(X[1], t[2]);
+						$(log).append(line('X<sub>2</sub> = X<sub>3</sub> (' + X[2].toString(16) + ') XOR t<sub>1</sub>(' + t[1].toString(16) + ')'));
+						X[1] = xor(X[2], t[1]);
+						$(log).append(line('X<sub>3</sub> = a(' + a.toString(16) + ')'));
+						X[2] = a;
+
+						$('#results-grid').append(
+							createRound('Round ' + (i + 1), [
+								createBlock(sk),
+								createBlock(X)
+							])
+						);
+						$('#results-grid').append(log);
+					}
+
+					// Output Transformation
+					var	sk		=	[],
+						subkey	=	wholeKey.substr(8 * 96, 64),
+						Y		=	[];
+
+					for (var j = 0; j < subkey.length; j += 16) {
+						sk.push(parseInt(subkey.substr(j, 16), 2));
+					}
+					Y[0] = multiply(X[0], sk[0]);
+					Y[3] = multiply(X[3], sk[3]);
+					Y[1] = add(X[2], sk[1]);
+					Y[2] = add(X[1], sk[2]);
+					$('#output-grid').append(
+						createRound('Output', [
+							createBlock(sk),
+							createBlock(Y)
+						])
+					);
+
+					var out = '';
+					for (var i = 0; i < Y.length; i++) {
+						var s = '000' + Y[i].toString(16);
+						s = s.substring(s.length - 4);
+						out += s;
+					}
+					$('#output').text(out);
+
+					$('#results').show();
+
+					$('html, body').animate({
+						scrollTop: $('#results').offset().top
+					}, 2000);
+				});
+
+				$('#results').hide();
+
+				$('.key-row .input-block').each(function (idx) {
+					$(this).val((idx.toString(16) + idx.toString(16)).toUpperCase());
+				});
+				$('.msg-row .input-block').each(function (idx) {
+					$(this).val((idx.toString(16) + idx.toString(16)).toUpperCase());
+				});
+			}) ();
+		</script>
+	</body>
+</html>
