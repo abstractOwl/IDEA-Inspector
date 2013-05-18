@@ -1,5 +1,5 @@
 # IDEA Inspector
-Displays the values of each round of the IDEA algorithm.
+Displays the values of each round of the IDEA algorithm. Hacked together in 2 days, code needs cleanup.
 
 ## Overview:
 * TBD
